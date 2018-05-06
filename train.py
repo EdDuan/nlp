@@ -51,7 +51,7 @@ def data_helper():
     return x_train, y_train, x_dev, y_dev, length_train, length_test
 
 
-def train(x_train, y_train, x_dev, y_dev,length_train, length_dev):  # 传入训练集和验证集 维度eg.X:[M, 20, 100] Y[M, 20]
+def train(x_train, y_train, x_dev, y_dev, length_train, length_dev):  # 传入训练集和验证集 维度eg.X:[M, 20, 100] Y[M, 20]
     # 定义输入输出
     x = tf.placeholder(tf.float32, [
         None,  # batch_size
@@ -59,7 +59,7 @@ def train(x_train, y_train, x_dev, y_dev,length_train, length_dev):  # 传入训
         inference.SENTENCE_LEN],  # sentence2vec维度对应channels
                        name='x-input')
     y_ = tf.placeholder(tf.float32, [None, inference.MAX_LEN_DOC], name='y-input')
-    length = tf.placeholder(tf.int16,)
+    length = tf.placeholder(tf.int16, [None, 1])
 
     # 正则化
     # regularizer = tf.contrib.layers.l2_regularizer(REGULARIZATION_RATE)
@@ -97,7 +97,7 @@ def train(x_train, y_train, x_dev, y_dev,length_train, length_dev):  # 传入训
                 length_x = length_train[start:end]
                 _, loss_value = sess.run([train_step, loss], feed_dict={x: batch_x, y_: batch_y})
                 print("After %d training step(s), loss on training batch is %g." % (
-                i * math.ceil(data_size / BATCH_SIZE) + j, loss_value))
+                    i * math.ceil(data_size / BATCH_SIZE) + j, loss_value))
                 saver.save(sess, os.path.join(MODEL_SAVE_PATH, MODEL_NAME))
             eval.evaluate(x_dev, y_dev, i)
 
